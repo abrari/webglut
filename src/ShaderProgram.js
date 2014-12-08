@@ -107,6 +107,7 @@ var ShaderProgram = Class.extend({
 	this.pMatrixUniform   = gl.getUniformLocation(this.program, "uProjectionMatrix");
 	this.mvMatrixUniform  = gl.getUniformLocation(this.program, "uModelViewMatrix");
 	this.vertexPosition   = gl.getAttribLocation(this.program,  "aVertexPosition");
+	this.vertexColor   = gl.getAttribLocation(this.program,  "aVertexColor");
   },
 
   enable: function() {
@@ -115,6 +116,7 @@ var ShaderProgram = Class.extend({
 	gl.uniformMatrix4fv(this.pMatrixUniform, false, gl.getProjectionMatrix().toFloat32());
 	gl.uniformMatrix4fv(this.mvMatrixUniform, false, gl.getModelViewMatrix().toFloat32());
 	gl.enableVertexAttribArray(this.vertexPosition);
+	gl.enableVertexAttribArray(this.vertexColor);
   },
 
   disable: function(){

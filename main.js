@@ -1,5 +1,5 @@
 //global variables
-var shader, vbo;
+var shader, object1;
 var rotation_angle = 0;
 
 //called when the canvas/window is resized
@@ -16,7 +16,7 @@ function display() {
 	gl.pushMatrix();
 	gl.translate(window.innerWidth/2, window.innerHeight/2, 0);
 	gl.rotate(rotation_angle, 0.0, 0.0, 1);
-	vbo.draw(shader, gl.TRIANGLE_STRIP);
+	object1.draw(shader, gl.TRIANGLE_STRIP);
 	gl.popMatrix();
 }
 
@@ -29,10 +29,19 @@ function idle(){
 window.onload = function() {
 	initWebGlut("WebGlut");
 	shader = new ShaderProgram("#vertex-shader", "#fragment-shader");
-	vbo = new VertexBuffer("vvv", [
-		-100, -100, 0,    100, -100, 0,
-		-100,  100, 0,    100,  100, 0,
-	 ]);
+	object1 = new VertexBuffer([
+	    // vertices
+		-100, -100, 0,    
+		 100, -100, 0,
+		-100,  100, 0,    
+		 100,  100, 0,
+	 ], [
+	    // colors
+        1.0,  1.0,  1.0,  1.0,
+        1.0,  0.0,  0.0,  1.0,
+        0.0,  1.0,  0.0,  1.0,
+        0.0,  0.0,  1.0,  1.0 
+    ]);
 	wglutIdleFunc(idle);
 	wglutReshapeFunc(reshape);
 	wglutDisplayFunc(display);

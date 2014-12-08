@@ -1,31 +1,31 @@
 
 //class for VBO's
-// data:  this is teh vertex data,  a regular array should be passed, with all the vertex data
-// format:  specifies what kind of data and how many coordiantes.
-//          eg. "vvv" would mean teh buffer has 3 component vertices e.g. (x,y,z)
-//          "vvvccc", would interleave a 3 vector for position with a 3 compnent color for each vertex
-//          "vvvccctt" adds two texture coordinates to the vertex.  this way you can just call draw on the
-//          buffer object and it will set up teh binding and attribute pointers for you correctly
+// data:       this is the vertex data,  a regular array should be passed, with all the vertex data
+// color_data: this is the color data, which defines color for each vertices (in R, G, B, A)
+//             every vertices have to assigned to a color
 //
 // Here is an example, sets up a VBO for a very simple triangle.
-// i.e.just 3 vertices (0,1,0), (-1,-1,0), and (1,-1,-)
+// i.e. just 3 vertices (0,1,0), (-1,-1,0), and (1,-1,-)
+// with colors: (1,0,0,1), (0,1,0,1), (0,0,1,1)
 //
 // var verts = [0,1,0, -1,-1,0, 1,-1,0];
-// var vbo = new VertexBuffer("vvv", verts);
+// var colors = [1,0,0,1, 0,1,0,1, 0,0,1,1];
+// var vbo = new VertexBuffer(verts, colors);
 
 var VertexBuffer = Class.extend({
-	init: function(format, data){
+	init: function(data, color_data){
 		this.buffer = gl.createBuffer();
-		this.format = format;
-		this.item_size = 3;//format.lenght;
-		if (data)
-			this.set_data(data);
-		else
-			data = [];
+		this.color_buffer = gl.createBuffer();
+		this.item_size = 3; // x, y, z
+		this.color_size = 4; // r, g, b, a
+
+        if(data) this.set_data(data, color_data);
 	},
 
-	set_data: function(data){
+	set_data: function(data, color_data){
 		this.data = data;
+		this.color_data = color_data;
+		
 		this.num_items = this.data.length/this.item_size;
 		this.pack();
 	},
@@ -33,16 +33,23 @@ var VertexBuffer = Class.extend({
 	pack: function(){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.data), gl.STATIC_DRAW);
-		this.buffer.itemsize = this.item_size;
-		this.buffer.numItems = this.num_items;
+		
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.color_data), gl.STATIC_DRAW);			
 	},
 
 	draw: function(shader, mode){
-		if (mode == undefined)
-			mode = gl.TRIANGLES;
+		if (mode == undefined) mode = gl.TRIANGLES;
 		shader.enable();
+					          
+        // Vertex buffer  
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
 		gl.vertexAttribPointer(shader.vertexPosition, this.item_size, gl.FLOAT, false, 0, 0);
+		
+		// Color buffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
+        gl.vertexAttribPointer(shader.vertexColor, this.color_size, gl.FLOAT, false, 0, 0);		
+		
 		gl.drawArrays(mode, 0, this.num_items);
 	}
 });
