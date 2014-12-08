@@ -15,14 +15,13 @@ function display() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.pushMatrix();
 	gl.translate(window.innerWidth/2, window.innerHeight/2, 0);
-	gl.rotate(rotation_angle, 0.0, 0.0, 1);
 	object1.draw(shader, gl.TRIANGLE_STRIP);
 	gl.popMatrix();
 }
 
 //idle function
 function idle(){
-	rotation_angle = (rotation_angle+1) % 360.0;
+
 }
 
 //when the window is done loading, we create a openGL context
@@ -33,14 +32,12 @@ window.onload = function() {
 	    // vertices
 		-100, -100, 0,    
 		 100, -100, 0,
-		-100,  100, 0,    
-		 100,  100, 0,
+		 0,  100, 0,    
 	 ], [
 	    // colors
-        1.0,  1.0,  1.0,  1.0,
-        1.0,  0.0,  0.0,  1.0,
         0.0,  1.0,  0.0,  1.0,
-        0.0,  0.0,  1.0,  1.0 
+        0.0,  1.0,  0.0,  1.0,
+        0.0,  1.0,  0.0,  1.0,
     ]);
 	wglutIdleFunc(idle);
 	wglutReshapeFunc(reshape);
